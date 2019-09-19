@@ -15,8 +15,8 @@ setup(
     author_email='dthomas@osrfoundation.org',
     maintainer='Jacob Perron',
     maintainer_email='jacob@openrobotics.org',
-    url='https://github.com/ros2/rosidl_python/tree/master/rosidl_runtime_py',
-    download_url='https://github.com/ros2/rosidl_python/releases',
+    url='https://github.com/ros2/rosidl_runtime_py',
+    download_url='https://github.com/ros2/rosidl_runtime_py/releases',
     keywords=[],
     classifiers=[
         'Environment :: Console',
