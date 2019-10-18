@@ -38,7 +38,7 @@ def _get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
         try:
             content, _ = get_resource('rosidl_interfaces', package_name)
         except LookupError:
-            pass
+            continue
         interfaces[package_name] = content.splitlines()
     return interfaces
 
