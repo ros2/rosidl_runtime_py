@@ -13,122 +13,171 @@
 # limitations under the License.
 
 import os
+from typing import Dict
+from typing import Iterable
+from typing import List
 
 from ament_index_python import get_resource
 from ament_index_python import get_resources
 from ament_index_python import has_resource
 
 
-def get_all_interface_packages():
+def get_interface_packages() -> List[str]:
+    """Get all packages that generate interfaces."""
     return get_resources('rosidl_interfaces')
 
 
-def get_interfaces(package_name):
-    if not has_resource('packages', package_name):
-        raise LookupError('Unknown package {}'.format(package_name))
-    try:
-        content, _ = get_resource('rosidl_interfaces', package_name)
-    except LookupError:
-        return []
-    interface_names = content.splitlines()
-    return list(sorted({
-        n.rsplit('.', 1)[0]
-        for n in interface_names
-        if '_' not in n}))
+def _get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
+    interfaces = {}
+    if len(package_names) == 0:
+        package_names = get_resources('rosidl_interfaces')
+
+    for package_name in package_names:
+        if not has_resource('packages', package_name):
+            raise LookupError(f"Unknown package '{package_name}'")
+        try:
+            content, _ = get_resource('rosidl_interfaces', package_name)
+        except LookupError:
+            pass
+        interfaces[package_name] = content.splitlines()
+    return interfaces
 
 
-def get_interface_path(parts):
+def get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
+    """
+    Get interfaces for one or more packages.
+
+    If a package does not contain any interfaces, then it will not exist in the returned
+    dictionary.
+
+    :param package_names: Interfaces are returned for these packages.
+      If no package names are provided, then this function returns interfaces for all packages.
+    :return: A dictionary where keys are package names and values are lists of interface names.
+    :raises LookupError: If one or more packages can not be found.
+    """
+    interfaces = _get_interfaces(package_names)
+    # filter out hidden interfaces
+    filtered_interfaces = {}
+    for package_name, interface_names in interfaces.items():
+        filtered_interfaces[package_name] = list({
+            interface_name.rsplit('.', 1)[0]
+            for interface_name in interface_names
+            if '_' not in interface_name
+        })
+    return filtered_interfaces
+
+
+def get_message_interfaces(package_names: Iterable[str] = []) -> List[str]:
+    """
+    Get message interfaces for one or more packages.
+
+    If a package does not contain any message interfaces, then it will not exist in the returned
+    dictionary.
+
+    :param package_names: Message interfaces are returned for these packages.
+      If no package names are provided, then this function returns interfaces for all packages.
+    :return: A dictionary where keys are package names and values are lists of interface names.
+    :raises LookupError: If one or more packages can not be found.
+    """
+    interfaces = _get_interfaces(package_names)
+    # filter out hidden interfaces and identify message interfaces by the namespace and suffix
+    filtered_interfaces = {}
+    for package_name, interface_names in interfaces.items():
+        filtered_interfaces[package_name] = list({
+            interface_name[4:-4]
+            for interface_name in interface_names
+            if '_' not in interface_name and
+            interface_name.startswith('msg/') and
+            interface_name[-4:] in ('.idl', '.msg')
+        })
+    return filtered_interfaces
+
+
+def get_service_interfaces(package_names: Iterable[str] = []) -> List[str]:
+    """
+    Get service interfaces for one or more packages.
+
+    If a package does not contain any service interfaces, then it will not exist in the returned
+    dictionary.
+
+    :param package_names: Service interfaces are returned for these packages.
+      If no package names are provided, then this function returns interfaces for all packages.
+    :return: A dictionary where keys are package names and values are lists of interface names.
+    :raises LookupError: If one or more packages can not be found.
+    """
+    interfaces = _get_interfaces(package_names)
+    # filter out hidden interfaces and identify service interfaces by the namespace and suffix
+    filtered_interfaces = {}
+    for package_name, interface_names in interfaces.items():
+        filtered_interfaces[package_name] = list({
+            interface_name[4:-4]
+            for interface_name in interface_names
+            if '_' not in interface_name and
+            interface_name.startswith('srv/') and
+            interface_name[-4:] in ('.idl', '.srv')
+        })
+    return filtered_interfaces
+
+
+def get_action_interfaces(package_names: Iterable[str] = []) -> List[str]:
+    """
+    Get action interfaces for one or more packages.
+
+    If a package does not contain any action interfaces, then it will not exist in the returned
+    dictionary.
+
+    :param package_names: Action interfaces are returned for these packages.
+      If no package names are provided, then this function returns interfaces for all packages.
+    :return: A dictionary where keys are package names and values are lists of interface names.
+    :raises LookupError: If one or more packages can not be found.
+    """
+    interfaces = _get_interfaces(package_names)
+    # filter out hidden interfaces and identify action interfaces by the namespace and suffix
+    filtered_interfaces = {}
+    for package_name, interface_names in interfaces.items():
+        filtered_interfaces[package_name] = list({
+            interface_name[7:].rsplit('.', 1)[0]
+            for interface_name in interface_names
+            if '_' not in interface_name and
+            interface_name.startswith('action/') and
+            (interface_name[-4:] == '.idl' or interface_name[-7:] == '.action')
+        })
+    return filtered_interfaces
+
+
+def get_interface_path(interface_name: str) -> str:
+    """
+    Get the path to an interface definition file.
+
+    :param interface_name: The name of the interface (e.g. builtin_interfaces/msg/Time.msg)
+      If no dot-separated suffix is provided, then it is inferred from the namespace.
+    :return: The path to the interface definition file.
+    :raises ValueError: If the interface name is malformed.
+    :raises LookupError: If the package or interface cannot be found.
+    """
+    # Split up the name for analysis
+    parts = interface_name.split('/')
+    # By convention we expect there to be at least two parts to the interface
+    if len(parts) < 2:
+        raise ValueError(
+            f"Invalid name '{interface_name}'. Expected at least two parts separated by '/'")
+    if not all(parts):
+        raise ValueError(f"Invalid name '{interface_name}'. Must not contain empty parts")
+    # By convention we expect the first part to be the package name
     prefix_path = has_resource('packages', parts[0])
-    joined = '/'.join(parts)
+    if not prefix_path:
+        raise LookupError(f"Unknown package '{parts[0]}'")
+
+    interface_path = os.path.join(prefix_path, 'share', interface_name)
+    # Check if there is a dot-separated suffix
     if len(parts[-1].rsplit('.', 1)) == 1:
-        joined += '.idl'
-    interface_path = os.path.join(
-        prefix_path, 'share', joined)
+        # If there is no suffix, try appending parent namespace (e.g. '.msg', '.srv', '.action')
+        interface_path_with_suffix = interface_path + '.' + parts[-2]
+        if os.path.exists(interface_path_with_suffix):
+            return interface_path_with_suffix
+        # Finally, try appending '.idl'
+        interface_path += '.idl'
+
     if not os.path.exists(interface_path):
-        raise LookupError('Could not find the interface {!r}'.format(interface_path))
+        raise LookupError(f"Could not find the interface '{interface_path}'")
     return interface_path
-
-
-def get_all_action_types():
-    all_action_types = {}
-    for package_name in get_resources('rosidl_interfaces'):
-        action_types = get_action_types(package_name)
-        if action_types:
-            all_action_types[package_name] = action_types
-    return all_action_types
-
-
-def get_action_types(package_name):
-    if not has_resource('packages', package_name):
-        raise LookupError('Unknown package name')
-    try:
-        content, _ = get_resource('rosidl_interfaces', package_name)
-    except LookupError:
-        return []
-    interface_names = content.splitlines()
-    # TODO(jacobperron) this logic should come from a rosidl related package
-    # Only return actions in action folder
-    return list(sorted({
-        n[7:].rsplit('.', 1)[0]
-        for n in interface_names
-        if n.startswith('action/') and (n[-4:] == '.idl' or n[-7:] == '.action')}))
-
-
-def get_all_message_types():
-    all_message_types = {}
-    for package_name in get_resources('rosidl_interfaces'):
-        message_types = get_message_types(package_name)
-        if message_types:
-            all_message_types[package_name] = message_types
-    return all_message_types
-
-
-def get_message_types(package_name):
-    if not has_resource('packages', package_name):
-        raise LookupError('Unknown package name')
-    try:
-        content, _ = get_resource('rosidl_interfaces', package_name)
-    except LookupError:
-        return []
-    interface_names = content.splitlines()
-    # TODO(dirk-thomas) this logic should come from a rosidl related package
-    # Only return messages in msg folder
-    return list(sorted({
-        n[4:-4]
-        for n in interface_names
-        if n.startswith('msg/') and n[-4:] in ('.idl', '.msg')}))
-
-
-def get_all_service_types():
-    all_service_types = {}
-    for package_name in get_resources('rosidl_interfaces'):
-        service_types = get_service_types(package_name)
-        if service_types:
-            all_service_types[package_name] = service_types
-    return all_service_types
-
-
-def get_service_types(package_name):
-    if not has_resource('packages', package_name):
-        raise LookupError('Unknown package name')
-    try:
-        content, _ = get_resource('rosidl_interfaces', package_name)
-    except LookupError:
-        return []
-    interface_names = content.splitlines()
-    # TODO(dirk-thomas) this logic should come from a rosidl related package
-    # Only return services in srv folder
-    return list(sorted({
-        n[4:-4]
-        for n in interface_names
-        if n.startswith('srv/') and n[-4:] in ('.idl', '.srv')}))
-
-
-def get_message_path(package_name, message_name):
-    message_types = get_message_types(package_name)
-    if message_name not in message_types:
-        raise LookupError('Unknown message name')
-    prefix_path = has_resource('packages', package_name)
-    # TODO(dirk-thomas) this logic should come from a rosidl related package
-    return os.path.join(
-        prefix_path, 'share', package_name, 'msg', message_name + '.msg')
