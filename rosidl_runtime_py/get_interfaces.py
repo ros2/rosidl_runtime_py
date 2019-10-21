@@ -59,11 +59,13 @@ def get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     # filter out hidden interfaces
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
-        filtered_interfaces[package_name] = list({
+        _interfaces = list({
             interface_name.rsplit('.', 1)[0]
             for interface_name in interface_names
             if '_' not in interface_name
         })
+        if _interfaces:
+            filtered_interfaces[package_name] = _interfaces
     return filtered_interfaces
 
 
@@ -83,13 +85,15 @@ def get_message_interfaces(package_names: Iterable[str] = []) -> List[str]:
     # filter out hidden interfaces and identify message interfaces by the namespace and suffix
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
-        filtered_interfaces[package_name] = list({
+        message_interfaces = list({
             interface_name[4:-4]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('msg/') and
             interface_name[-4:] in ('.idl', '.msg')
         })
+        if message_interfaces:
+            filtered_interfaces[package_name] = message_interfaces
     return filtered_interfaces
 
 
@@ -109,13 +113,15 @@ def get_service_interfaces(package_names: Iterable[str] = []) -> List[str]:
     # filter out hidden interfaces and identify service interfaces by the namespace and suffix
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
-        filtered_interfaces[package_name] = list({
+        service_interfaces = list({
             interface_name[4:-4]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('srv/') and
             interface_name[-4:] in ('.idl', '.srv')
         })
+        if service_interfaces:
+            filtered_interfaces[package_name] = service_interfaces
     return filtered_interfaces
 
 
@@ -135,13 +141,15 @@ def get_action_interfaces(package_names: Iterable[str] = []) -> List[str]:
     # filter out hidden interfaces and identify action interfaces by the namespace and suffix
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
-        filtered_interfaces[package_name] = list({
+        action_interfaces = list({
             interface_name[7:].rsplit('.', 1)[0]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('action/') and
             (interface_name[-4:] == '.idl' or interface_name[-7:] == '.action')
         })
+        if action_interfaces:
+            filtered_interfaces[package_name] = action_interfaces
     return filtered_interfaces
 
 

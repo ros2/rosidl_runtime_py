@@ -25,6 +25,8 @@ from rosidl_runtime_py import get_service_interfaces
 
 # these packages are listed as dependencies in the package.xml
 INTERFACE_PACKAGE = 'test_msgs'
+MESSAGE_INTERFACE_ONLY_PACKAGE = 'std_msgs'
+SERVICE_INTERFACE_ONLY_PACKAGE = 'std_srvs'
 NON_INTERFACE_PACKAGE = 'rosidl_parser'
 
 
@@ -32,6 +34,8 @@ def test_get_interface_packages():
     packages = get_interface_packages()
     assert len(packages) > 0
     assert INTERFACE_PACKAGE in packages
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE in packages
+    assert SERVICE_INTERFACE_ONLY_PACKAGE in packages
     assert NON_INTERFACE_PACKAGE not in packages
 
 
@@ -51,9 +55,16 @@ def test_get_interfaces():
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
     # multiple packages
-    interfaces = get_interfaces([INTERFACE_PACKAGE, NON_INTERFACE_PACKAGE])
+    interfaces = get_interfaces([
+        INTERFACE_PACKAGE,
+        MESSAGE_INTERFACE_ONLY_PACKAGE,
+        SERVICE_INTERFACE_ONLY_PACKAGE,
+        NON_INTERFACE_PACKAGE
+    ])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -67,6 +78,8 @@ def test_get_message_interfaces():
     interfaces = get_message_interfaces()
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -74,13 +87,22 @@ def test_get_message_interfaces():
     interfaces = get_message_interfaces([INTERFACE_PACKAGE])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
     # multiple packages
-    interfaces = get_message_interfaces([INTERFACE_PACKAGE, NON_INTERFACE_PACKAGE])
+    interfaces = get_message_interfaces([
+        INTERFACE_PACKAGE,
+        MESSAGE_INTERFACE_ONLY_PACKAGE,
+        SERVICE_INTERFACE_ONLY_PACKAGE,
+        NON_INTERFACE_PACKAGE
+    ])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -94,6 +116,8 @@ def test_get_service_interfaces():
     interfaces = get_service_interfaces()
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -101,13 +125,22 @@ def test_get_service_interfaces():
     interfaces = get_service_interfaces([INTERFACE_PACKAGE])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
     # multiple packages
-    interfaces = get_service_interfaces([INTERFACE_PACKAGE, NON_INTERFACE_PACKAGE])
+    interfaces = get_service_interfaces([
+        INTERFACE_PACKAGE,
+        MESSAGE_INTERFACE_ONLY_PACKAGE,
+        SERVICE_INTERFACE_ONLY_PACKAGE,
+        NON_INTERFACE_PACKAGE
+    ])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -121,6 +154,8 @@ def test_get_action_interfaces():
     interfaces = get_action_interfaces()
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -128,6 +163,8 @@ def test_get_action_interfaces():
     interfaces = get_action_interfaces([INTERFACE_PACKAGE])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
@@ -135,6 +172,8 @@ def test_get_action_interfaces():
     interfaces = get_action_interfaces([INTERFACE_PACKAGE, NON_INTERFACE_PACKAGE])
     assert len(interfaces) > 0
     assert INTERFACE_PACKAGE in interfaces
+    assert MESSAGE_INTERFACE_ONLY_PACKAGE not in interfaces
+    assert SERVICE_INTERFACE_ONLY_PACKAGE not in interfaces
     assert NON_INTERFACE_PACKAGE not in interfaces
     assert len(interfaces[INTERFACE_PACKAGE]) > 0
 
