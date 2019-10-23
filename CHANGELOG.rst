@@ -2,6 +2,12 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.8.1 (2019-10-23)
+------------------
+* Fix get_interfaces() implementation. (`#4 <https://github.com/ros2/rosidl_runtime_py/issues/4>`_)
+* Add functions for getting interface names and paths (`#3 <https://github.com/ros2/rosidl_runtime_py/issues/3>`_)
+* Contributors: Jacob Perron, Michel Hidalgo
+
 0.8.0 (2019-09-26)
 ------------------
 * install resource marker file for package (`#2 <https://github.com/ros2/rosidl_runtime_py/issues/2>`_)
