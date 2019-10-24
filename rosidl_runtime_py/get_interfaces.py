@@ -86,7 +86,7 @@ def get_message_interfaces(package_names: Iterable[str] = []) -> List[str]:
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
         message_interfaces = list({
-            interface_name[4:-4]
+            interface_name[:-4]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('msg/') and
@@ -114,7 +114,7 @@ def get_service_interfaces(package_names: Iterable[str] = []) -> List[str]:
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
         service_interfaces = list({
-            interface_name[4:-4]
+            interface_name[:-4]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('srv/') and
@@ -142,7 +142,7 @@ def get_action_interfaces(package_names: Iterable[str] = []) -> List[str]:
     filtered_interfaces = {}
     for package_name, interface_names in interfaces.items():
         action_interfaces = list({
-            interface_name[7:].rsplit('.', 1)[0]
+            interface_name.rsplit('.', 1)[0]
             for interface_name in interface_names
             if '_' not in interface_name and
             interface_name.startswith('action/') and
