@@ -171,12 +171,16 @@ def get_interface_path(interface_name: str) -> str:
             f"Invalid name '{interface_name}'. Expected at least two parts separated by '/'")
     if not all(parts):
         raise ValueError(f"Invalid name '{interface_name}'. Must not contain empty parts")
+    if '..' in parts:
+        raise ValueError(f"Must not contain '..'")
     # By convention we expect the first part to be the package name
     prefix_path = has_resource('packages', parts[0])
     if not prefix_path:
         raise LookupError(f"Unknown package '{parts[0]}'")
 
     interface_path = os.path.join(prefix_path, 'share', interface_name)
+    if not parts[-2] in ['msg', 'srv', 'action']:
+        raise ValueError(f"Namespace should be 'msg', 'srv' or 'action'")
     # Check if there is a dot-separated suffix
     if len(parts[-1].rsplit('.', 1)) == 1:
         # If there is no suffix, try appending parent namespace (e.g. '.msg', '.srv', '.action')
