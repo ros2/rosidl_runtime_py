@@ -179,8 +179,6 @@ def get_interface_path(interface_name: str) -> str:
         raise LookupError(f"Unknown package '{parts[0]}'")
 
     interface_path = os.path.join(prefix_path, 'share', interface_name)
-    if not parts[-2] in ['msg', 'srv', 'action']:
-        raise ValueError(f"Namespace should be 'msg', 'srv' or 'action'")
     # Check if there is a dot-separated suffix
     if len(parts[-1].rsplit('.', 1)) == 1:
         # If there is no suffix, try appending parent namespace (e.g. '.msg', '.srv', '.action')
