@@ -69,7 +69,7 @@ def get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     return filtered_interfaces
 
 
-def get_message_interfaces(package_names: Iterable[str] = []) -> List[str]:
+def get_message_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     """
     Get message interfaces for one or more packages.
 
@@ -97,7 +97,7 @@ def get_message_interfaces(package_names: Iterable[str] = []) -> List[str]:
     return filtered_interfaces
 
 
-def get_service_interfaces(package_names: Iterable[str] = []) -> List[str]:
+def get_service_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     """
     Get service interfaces for one or more packages.
 
@@ -125,7 +125,7 @@ def get_service_interfaces(package_names: Iterable[str] = []) -> List[str]:
     return filtered_interfaces
 
 
-def get_action_interfaces(package_names: Iterable[str] = []) -> List[str]:
+def get_action_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     """
     Get action interfaces for one or more packages.
 
