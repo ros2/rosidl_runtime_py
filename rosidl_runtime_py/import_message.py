@@ -32,7 +32,7 @@ def import_message_from_namespaced_type(message_type: NamespacedType) -> Any:
 
     # Special case for action feedback
     if message_type.name.endswith('_FeedbackMessage'):
-        action_name, name = message_type.name.split('_', 1)
+        action_name, name = message_type.name.rsplit('_', 1)
         return getattr(getattr(getattr(module, action_name), 'Impl'), name)
 
     return getattr(module, message_type.name)
