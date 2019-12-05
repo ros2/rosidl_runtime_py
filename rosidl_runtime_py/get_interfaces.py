@@ -171,6 +171,8 @@ def get_interface_path(interface_name: str) -> str:
             f"Invalid name '{interface_name}'. Expected at least two parts separated by '/'")
     if not all(parts):
         raise ValueError(f"Invalid name '{interface_name}'. Must not contain empty parts")
+    if '..' in parts:
+        raise ValueError(f"Invalid name '{interface_name}'. Must not contain '..'")
     # By convention we expect the first part to be the package name
     prefix_path = has_resource('packages', parts[0])
     if not prefix_path:
