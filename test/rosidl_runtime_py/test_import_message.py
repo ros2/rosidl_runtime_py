@@ -20,6 +20,7 @@ from rosidl_parser.definition import UnboundedSequence
 
 from rosidl_runtime_py.import_message import import_message_from_namespaced_type
 
+from test_msgs.action._fibonacci import Fibonacci_FeedbackMessage
 from test_msgs.msg import Empty
 
 
@@ -38,3 +39,9 @@ def test_import_namespaced_type():
         assert len(w) == 1
         assert issubclass(w[0].category, DeprecationWarning)
     assert type(imported_message2) == type(Empty)
+
+
+def test_import_namespaced_type_feedback_message():
+    feedback_namespaced_type = NamespacedType(['test_msgs', 'action'], 'Fibonacci_FeedbackMessage')
+    imported_message = import_message_from_namespaced_type(feedback_namespaced_type)
+    assert type(imported_message) == type(Fibonacci_FeedbackMessage)
