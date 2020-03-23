@@ -104,6 +104,8 @@ def message_to_csv(
     """
     Convert a ROS message to string of comma-separated values.
 
+    If the message is serialized, then a single string of bytes is returned.
+
     :param msg: The ROS message to convert.
     :param truncate_length: Truncate values for all message fields to this length.
         This does not truncate the list of message fields.
@@ -141,6 +143,10 @@ def message_to_csv(
         return r
     result = ''
 
+    # Special case: if the message is serialized, then return the bytes as a string
+    if isinstance(msg, bytes):
+        return str(msg)
+
     # We rely on __slots__ retaining the order of the fields in the .msg file.
     for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
         value = getattr(msg, field_name)
@@ -164,6 +170,9 @@ def message_to_ordereddict(
     """
     Convert a ROS message to an OrderedDict.
 
+    If the message is serialized, then the returned dictionary will only contain one entry
+    named 'bytes' containing the binary data that is the message.
+
     :param msg: The ROS message to convert.
     :param truncate_length: Truncate values for all message fields to this length.
         This does not truncate the list of fields (ie. the dictionary keys).
@@ -173,6 +182,11 @@ def message_to_ordereddict(
         set to the values of the input message.
     """
     d = OrderedDict()
+
+    # Special case: if the message is serialized, then return a single field containing the bytes
+    if isinstance(msg, bytes):
+        d['bytes'] = msg
+        return d
 
     # We rely on __slots__ retaining the order of the fields in the .msg file.
     for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):

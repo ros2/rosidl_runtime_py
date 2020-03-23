@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 from collections import OrderedDict
 
 from rosidl_runtime_py import message_to_csv
@@ -111,3 +112,24 @@ def test_convert_dict():
     assert {1: 'a', '2': 'b'} == _convert_value({1: 'a', '2': 'b'}, truncate_length=1000)
     assert {1: 'a...', '234': 'b...'} == _convert_value(
         {1: 'abc', '234': 'bcd'}, truncate_length=1)
+
+
+def test_convert_serialized_message_ordered_dict():
+    serialized_data = b'\xce\xbb'
+    result = message_to_ordereddict(serialized_data)
+    assert 'bytes' in result
+    assert result['bytes'] == serialized_data
+
+
+def test_convert_serialized_message_yaml():
+    serialized_data = b'\xce\xbb'
+    # YAML uses base64 encoding
+    base64_data = base64.b64encode(serialized_data)
+    result = message_to_yaml(serialized_data)
+    assert base64_data.decode() in result
+
+
+def test_convert_serialized_message_to_csv():
+    serialized_data = b'\xce\xbb'
+    result = message_to_csv(serialized_data)
+    assert result == str(serialized_data)
