@@ -92,6 +92,10 @@ def test_set_message_fields_invalid():
     with pytest.raises(ValueError):
         set_message_fields(msg, invalid_type)
 
+    msg = message_fixtures.get_msg_nested()[0]
+    with pytest.raises(TypeError):
+        set_message_fields(msg, 'not_a_dict')
+
 
 def test_set_nested_namespaced_fields():
     unbounded_sequence_msg = message_fixtures.get_msg_unbounded_sequences()[1]

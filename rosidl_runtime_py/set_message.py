@@ -33,9 +33,15 @@ def set_message_fields(msg: Any, values: Dict[str, str]) -> None:
     :param values: The values to set in the ROS message. The keys of the dictionary represent
         fields of the message.
     :raises AttributeError: If the message does not have a field provided in the input dictionary.
-    :raises ValueError: If a message value does not match its field type.
+    :raises TypeError: If a message value does not match its field type.
     """
-    for field_name, field_value in values.items():
+    try:
+        items = values.items()
+    except AttributeError:
+        raise TypeError(
+            "Value '%s' is expected to be a dictionary but is a %s" %
+            (values, type(values).__name__))
+    for field_name, field_value in items:
         field = getattr(msg, field_name)
         field_type = type(field)
         if field_type is array.array:
