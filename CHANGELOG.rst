@@ -2,6 +2,15 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve exception message if value doesn't match expected type (`#11 <https://github.com/ros2/rosidl_runtime_py/issues/11>`_)
+* More verbose test_flake8 error messages (same as `ros2/launch_ros#135 <https://github.com/ros2/launch_ros/issues/135>`_)
+* Add special case for importing action feedback message (`#9 <https://github.com/ros2/rosidl_runtime_py/issues/9>`_)
+* Limit the interface path to prevent security issues (`#7 <https://github.com/ros2/rosidl_runtime_py/issues/7>`_)
+* Fix type annotations (`#8 <https://github.com/ros2/rosidl_runtime_py/issues/8>`_)
+* Contributors: ChenYing Kuo, Dirk Thomas, Jacob Perron
+
 0.8.2 (2019-11-08)
 ------------------
 * Add .gitignore (`#5 <https://github.com/ros2/rosidl_runtime_py/issues/5>`_)
