@@ -4,6 +4,11 @@ Changelog for package rosidl_runtime_py
 
 Forthcoming
 -----------
+* Add pytest.ini so local tests don't display warning (`#12 <https://github.com/ros2/rosidl_runtime_py/issues/12>`_)
+* Contributors: Chris Lalancette
+
+0.9.0 (2020-04-29)
+------------------
 * Improve exception message if value doesn't match expected type (`#11 <https://github.com/ros2/rosidl_runtime_py/issues/11>`_)
 * More verbose test_flake8 error messages (same as `ros2/launch_ros#135 <https://github.com/ros2/launch_ros/issues/135>`_)
 * Add special case for importing action feedback message (`#9 <https://github.com/ros2/rosidl_runtime_py/issues/9>`_)
