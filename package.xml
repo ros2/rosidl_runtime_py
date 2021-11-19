@@ -4,10 +4,13 @@
   <name>rosidl_runtime_py</name>
   <version>0.9.1</version>
   <description>Runtime utilities for working with generated ROS interfaces in Python.</description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+
+  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
+
   <license>Apache License 2.0</license>
 
   <author email="dthomas@osrfoundation.org">Dirk Thomas</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
 
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
