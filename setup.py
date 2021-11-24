@@ -16,7 +16,7 @@ setup(
     author='Dirk Thomas',
     author_email='dthomas@osrfoundation.org',
     maintainer='Shane Loretz',
-    maintainer_email='shane@openrobotics.org',
+    maintainer_email='sloretz@openrobotics.org',
     url='https://github.com/ros2/rosidl_runtime_py',
     download_url='https://github.com/ros2/rosidl_runtime_py/releases',
     keywords=[],

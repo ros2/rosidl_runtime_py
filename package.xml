@@ -5,7 +5,7 @@
   <version>0.9.1</version>
   <description>Runtime utilities for working with generated ROS interfaces in Python.</description>
 
-  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
+  <maintainer email="sloretz@openrobotics.org">Shane Loretz</maintainer>
 
   <license>Apache License 2.0</license>
 
