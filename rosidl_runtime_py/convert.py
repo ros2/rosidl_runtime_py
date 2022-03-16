@@ -68,7 +68,8 @@ def message_to_yaml(
     *,
     truncate_length: int = None,
     no_arr: bool = False,
-    no_str: bool = False
+    no_str: bool = False,
+    flow_style: bool = False
 ) -> str:
     """
     Convert a ROS message to a YAML string.
@@ -90,7 +91,7 @@ def message_to_yaml(
     return yaml.dump(
         message_to_ordereddict(
             msg, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str),
-        allow_unicode=True, width=sys.maxsize,
+        allow_unicode=True, width=sys.maxsize, default_flow_style=flow_style,
     )
 
 
