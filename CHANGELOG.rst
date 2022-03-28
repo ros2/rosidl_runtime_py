@@ -2,6 +2,15 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.2 (2022-03-28)
+------------------
+* add yaml dump flow style. (`#16 <https://github.com/ros2/rosidl_runtime_py/issues/16>`_)
+* Update maintainers (`#15 <https://github.com/ros2/rosidl_runtime_py/issues/15>`_)
+  * Update maintainers to Shane Loretz
+  * Update Shane's email
+  Co-authored-by: Shane Loretz <sloretz@openrobotics.org>
+* Contributors: Audrow Nash, Tomoya Fujita
+
 0.9.1 (2021-03-18)
 ------------------
 * Add pytest.ini so local tests don't display warning (`#12 <https://github.com/ros2/rosidl_runtime_py/issues/12>`_)
