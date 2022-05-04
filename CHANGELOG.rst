@@ -2,6 +2,9 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.10.0 (2022-05-04)
+-------------------
+
 0.9.2 (2022-03-28)
 ------------------
 * add yaml dump flow style. (`#16 <https://github.com/ros2/rosidl_runtime_py/issues/16>`_)
