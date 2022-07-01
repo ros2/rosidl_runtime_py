@@ -21,6 +21,7 @@ import numpy
 import rosidl_parser.definition
 import yaml
 
+from rclpy.serialization import deserialize_message
 
 __yaml_representer_registered = False
 
@@ -69,7 +70,8 @@ def message_to_yaml(
     truncate_length: int = None,
     no_arr: bool = False,
     no_str: bool = False,
-    flow_style: bool = False
+    flow_style: bool = False,
+    serialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to a YAML string.
@@ -79,6 +81,8 @@ def message_to_yaml(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param flow_style: Print collections in the block style.
+    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A YAML string representation of the input ROS message.
     """
     global __yaml_representer_registered
@@ -90,7 +94,8 @@ def message_to_yaml(
 
     return yaml.dump(
         message_to_ordereddict(
-            msg, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str),
+            msg, truncate_length=truncate_length,
+            no_arr=no_arr, no_str=no_str, serialize_msg_type=serialize_msg_type),
         allow_unicode=True, width=sys.maxsize, default_flow_style=flow_style,
     )
 
@@ -160,7 +165,8 @@ def message_to_ordereddict(
     *,
     truncate_length: int = None,
     no_arr: bool = False,
-    no_str: bool = False
+    no_str: bool = False,
+    serialize_msg_type: Any = None
 ) -> OrderedDict:
     """
     Convert a ROS message to an OrderedDict.
@@ -170,6 +176,7 @@ def message_to_ordereddict(
         This does not truncate the list of fields (ie. the dictionary keys).
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: An OrderedDict where the keys are the ROS message fields and the values are
         set to the values of the input message.
     """
@@ -179,11 +186,21 @@ def message_to_ordereddict(
     for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
         value = getattr(msg, field_name, None)
 
-        value = _convert_value(
+        converted_value = _convert_value(
             value, field_type=field_type,
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
+
+        # Check if any of the data is of bytes type and deserialization is allowed.
+        if isinstance(value, (bytes, bytearray)) or \
+                (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
+            if serialize_msg_type is not None:
+                deserialized_data = deserialize_message(b''.join(value),
+                                                        serialize_msg_type)
+                converted_value = message_to_ordereddict(
+                    deserialized_data, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
+
         # Remove leading underscore from field name
-        d[field_name[1:]] = value
+        d[field_name[1:]] = converted_value
     return d
 
 
@@ -195,7 +212,6 @@ def _convert_value(
     no_arr=False,
     no_str=False
 ):
-
     if isinstance(value, bytes):
         if truncate_length is not None and len(value) > truncate_length:
             value = ''.join([chr(c) for c in value[:truncate_length]]) + '...'
