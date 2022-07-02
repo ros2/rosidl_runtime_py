@@ -105,7 +105,8 @@ def message_to_csv(
     *,
     truncate_length: int = None,
     no_arr: bool = False,
-    no_str: bool = False
+    no_str: bool = False,
+    serialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to string of comma-separated values.
@@ -115,8 +116,10 @@ def message_to_csv(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A string of comma-separated values representing the input message.
     """
+
     def to_string(val, field_type=None):
         nonlocal truncate_length, no_arr, no_str
         r = ''
@@ -154,7 +157,19 @@ def message_to_csv(
         if result:
             result += ','
 
-        result += to_string(value, field_type)
+        value_to_string = to_string(value, field_type)
+
+        # Check if any of the data is of bytes type and deserialization is allowed.
+        if isinstance(value, (bytes, bytearray)) or \
+                (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
+            if serialize_msg_type is not None:
+                deserialized_data = deserialize_message(b''.join(value),
+                                                        serialize_msg_type)
+                value_to_string = message_to_csv(
+                    deserialized_data, truncate_length=truncate_length,
+                    no_arr=no_arr, no_str=no_str)
+
+        result += value_to_string
     return result
 
 
