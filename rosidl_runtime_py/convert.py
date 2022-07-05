@@ -13,14 +13,17 @@
 # limitations under the License.
 
 import array
-from collections import OrderedDict
 import sys
+from collections import OrderedDict
 from typing import Any
 
 import numpy
 import rosidl_parser.definition
 import yaml
 
+from rclpy.exceptions import NoTypeSupportImportedException
+from rclpy.serialization import deserialize_message
+from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
 
 __yaml_representer_registered = False
 
@@ -63,13 +66,29 @@ def __represent_ordereddict(dumper, data):
     return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', items)
 
 
+def __deserialize_message(value, deserialize_msg_type):
+    deserialized_data = None
+    try:
+        deserialized_data = deserialize_message(b''.join(value),
+                                                deserialize_msg_type)
+    except (AttributeError, NoTypeSupportImportedException):
+        print('WARNING: The deserialize message type [%s] '
+              'provided is not valid, skipping deserialization' % deserialize_msg_type)
+    except _rclpy.RMWError as error:
+        print('WARNING: Failed to deserialize ROS message, '
+              'this might be due to incorrect deserialize message type')
+
+    return deserialized_data
+
+
 def message_to_yaml(
     msg: Any,
     *,
     truncate_length: int = None,
     no_arr: bool = False,
     no_str: bool = False,
-    flow_style: bool = False
+    flow_style: bool = False,
+    deserialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to a YAML string.
@@ -79,6 +98,8 @@ def message_to_yaml(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param flow_style: Print collections in the block style.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A YAML string representation of the input ROS message.
     """
     global __yaml_representer_registered
@@ -90,7 +111,8 @@ def message_to_yaml(
 
     return yaml.dump(
         message_to_ordereddict(
-            msg, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str),
+            msg, truncate_length=truncate_length,
+            no_arr=no_arr, no_str=no_str, deserialize_msg_type=deserialize_msg_type),
         allow_unicode=True, width=sys.maxsize, default_flow_style=flow_style,
     )
 
@@ -100,7 +122,8 @@ def message_to_csv(
     *,
     truncate_length: int = None,
     no_arr: bool = False,
-    no_str: bool = False
+    no_str: bool = False,
+    deserialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to string of comma-separated values.
@@ -110,8 +133,10 @@ def message_to_csv(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A string of comma-separated values representing the input message.
     """
+
     def to_string(val, field_type=None):
         nonlocal truncate_length, no_arr, no_str
         r = ''
@@ -149,7 +174,19 @@ def message_to_csv(
         if result:
             result += ','
 
-        result += to_string(value, field_type)
+        value_to_string = to_string(value, field_type)
+
+        # Check if any of the data is of bytes type and deserialization is allowed.
+        if isinstance(value, (bytes, bytearray)) or \
+                (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
+            if deserialize_msg_type is not None:
+                deserialized_data = __deserialize_message(value, deserialize_msg_type)
+                if deserialized_data is not None:
+                    value_to_string = message_to_csv(
+                        deserialized_data, truncate_length=truncate_length,
+                        no_arr=no_arr, no_str=no_str)
+
+        result += value_to_string
     return result
 
 
@@ -160,7 +197,8 @@ def message_to_ordereddict(
     *,
     truncate_length: int = None,
     no_arr: bool = False,
-    no_str: bool = False
+    no_str: bool = False,
+    deserialize_msg_type: Any = None
 ) -> OrderedDict:
     """
     Convert a ROS message to an OrderedDict.
@@ -170,6 +208,7 @@ def message_to_ordereddict(
         This does not truncate the list of fields (ie. the dictionary keys).
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: An OrderedDict where the keys are the ROS message fields and the values are
         set to the values of the input message.
     """
@@ -179,11 +218,21 @@ def message_to_ordereddict(
     for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
         value = getattr(msg, field_name, None)
 
-        value = _convert_value(
+        converted_value = _convert_value(
             value, field_type=field_type,
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
+
+        # Check if any of the data is of bytes type and deserialization is allowed.
+        if isinstance(value, (bytes, bytearray)) or \
+                (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
+            if deserialize_msg_type is not None:
+                deserialized_data = __deserialize_message(value, deserialize_msg_type)
+                if deserialized_data is not None:
+                    converted_value = message_to_ordereddict(
+                        deserialized_data, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
+
         # Remove leading underscore from field name
-        d[field_name[1:]] = value
+        d[field_name[1:]] = converted_value
     return d
 
 
@@ -195,7 +244,6 @@ def _convert_value(
     no_arr=False,
     no_str=False
 ):
-
     if isinstance(value, bytes):
         if truncate_length is not None and len(value) > truncate_length:
             value = ''.join([chr(c) for c in value[:truncate_length]]) + '...'
