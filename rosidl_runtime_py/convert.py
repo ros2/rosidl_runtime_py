@@ -71,7 +71,7 @@ def message_to_yaml(
     no_arr: bool = False,
     no_str: bool = False,
     flow_style: bool = False,
-    serialize_msg_type: Any = None,
+    deserialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to a YAML string.
@@ -82,7 +82,7 @@ def message_to_yaml(
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
     :param flow_style: Print collections in the block style.
-    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A YAML string representation of the input ROS message.
     """
     global __yaml_representer_registered
@@ -95,7 +95,7 @@ def message_to_yaml(
     return yaml.dump(
         message_to_ordereddict(
             msg, truncate_length=truncate_length,
-            no_arr=no_arr, no_str=no_str, serialize_msg_type=serialize_msg_type),
+            no_arr=no_arr, no_str=no_str, deserialize_msg_type=deserialize_msg_type),
         allow_unicode=True, width=sys.maxsize, default_flow_style=flow_style,
     )
 
@@ -106,7 +106,7 @@ def message_to_csv(
     truncate_length: int = None,
     no_arr: bool = False,
     no_str: bool = False,
-    serialize_msg_type: Any = None,
+    deserialize_msg_type: Any = None,
 ) -> str:
     """
     Convert a ROS message to string of comma-separated values.
@@ -116,7 +116,7 @@ def message_to_csv(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
-    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: A string of comma-separated values representing the input message.
     """
 
@@ -162,9 +162,9 @@ def message_to_csv(
         # Check if any of the data is of bytes type and deserialization is allowed.
         if isinstance(value, (bytes, bytearray)) or \
                 (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
-            if serialize_msg_type is not None:
+            if deserialize_msg_type is not None:
                 deserialized_data = deserialize_message(b''.join(value),
-                                                        serialize_msg_type)
+                                                        deserialize_msg_type)
                 value_to_string = message_to_csv(
                     deserialized_data, truncate_length=truncate_length,
                     no_arr=no_arr, no_str=no_str)
@@ -181,7 +181,7 @@ def message_to_ordereddict(
     truncate_length: int = None,
     no_arr: bool = False,
     no_str: bool = False,
-    serialize_msg_type: Any = None
+    deserialize_msg_type: Any = None
 ) -> OrderedDict:
     """
     Convert a ROS message to an OrderedDict.
@@ -191,7 +191,7 @@ def message_to_ordereddict(
         This does not truncate the list of fields (ie. the dictionary keys).
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
-    :param serialize_msg_type: The ROS msg type for the message to be deserialized.
+    :param deserialize_msg_type: The ROS msg type for the message to be deserialized.
     :returns: An OrderedDict where the keys are the ROS message fields and the values are
         set to the values of the input message.
     """
@@ -206,11 +206,12 @@ def message_to_ordereddict(
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
 
         # Check if any of the data is of bytes type and deserialization is allowed.
+        # TODO: check if successful
         if isinstance(value, (bytes, bytearray)) or \
                 (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
-            if serialize_msg_type is not None:
+            if deserialize_msg_type is not None:
                 deserialized_data = deserialize_message(b''.join(value),
-                                                        serialize_msg_type)
+                                                        deserialize_msg_type)
                 converted_value = message_to_ordereddict(
                     deserialized_data, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
 
