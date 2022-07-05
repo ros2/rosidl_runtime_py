@@ -13,15 +13,17 @@
 # limitations under the License.
 
 import array
-from collections import OrderedDict
 import sys
+from collections import OrderedDict
 from typing import Any
 
 import numpy
 import rosidl_parser.definition
 import yaml
 
+from rclpy.exceptions import NoTypeSupportImportedException
 from rclpy.serialization import deserialize_message
+from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
 
 __yaml_representer_registered = False
 
@@ -62,6 +64,21 @@ def __represent_ordereddict(dumper, data):
     for k, v in data.items():
         items.append((dumper.represent_data(k), dumper.represent_data(v)))
     return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', items)
+
+
+def __deserialize_message(value, deserialize_msg_type):
+    deserialized_data = None
+    try:
+        deserialized_data = deserialize_message(b''.join(value),
+                                                deserialize_msg_type)
+    except (AttributeError, NoTypeSupportImportedException):
+        print('WARNING: The deserialize message type [%s] '
+              'provided is not valid, skipping deserialization' % deserialize_msg_type)
+    except _rclpy.RMWError as error:
+        print('WARNING: Failed to deserialize ROS message, '
+              'this might be due to incorrect deserialize message type')
+
+    return deserialized_data
 
 
 def message_to_yaml(
@@ -163,11 +180,11 @@ def message_to_csv(
         if isinstance(value, (bytes, bytearray)) or \
                 (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
             if deserialize_msg_type is not None:
-                deserialized_data = deserialize_message(b''.join(value),
-                                                        deserialize_msg_type)
-                value_to_string = message_to_csv(
-                    deserialized_data, truncate_length=truncate_length,
-                    no_arr=no_arr, no_str=no_str)
+                deserialized_data = __deserialize_message(value, deserialize_msg_type)
+                if deserialized_data is not None:
+                    value_to_string = message_to_csv(
+                        deserialized_data, truncate_length=truncate_length,
+                        no_arr=no_arr, no_str=no_str)
 
         result += value_to_string
     return result
@@ -206,14 +223,13 @@ def message_to_ordereddict(
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
 
         # Check if any of the data is of bytes type and deserialization is allowed.
-        # TODO: check if successful
         if isinstance(value, (bytes, bytearray)) or \
                 (isinstance(value, list) and any(isinstance(val, bytes) for val in value)):
             if deserialize_msg_type is not None:
-                deserialized_data = deserialize_message(b''.join(value),
-                                                        deserialize_msg_type)
-                converted_value = message_to_ordereddict(
-                    deserialized_data, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
+                deserialized_data = __deserialize_message(value, deserialize_msg_type)
+                if deserialized_data is not None:
+                    converted_value = message_to_ordereddict(
+                        deserialized_data, truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
 
         # Remove leading underscore from field name
         d[field_name[1:]] = converted_value
