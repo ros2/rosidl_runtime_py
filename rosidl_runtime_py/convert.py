@@ -79,6 +79,7 @@ def message_to_yaml(
         This does not truncate the list of message fields.
     :param no_arr: Exclude array fields of the message.
     :param no_str: Exclude string fields of the message.
+    :param flow_style: Whether to use block style or flow style; defaults to block style.
     :returns: A YAML string representation of the input ROS message.
     """
     global __yaml_representer_registered
