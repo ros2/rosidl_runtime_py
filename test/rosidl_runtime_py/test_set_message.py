@@ -233,6 +233,16 @@ def test_set_message_fields_header_auto():
     assert msg.header.frame_id == ''
 
 
+def test_set_message_fields_header_auto_not_parsed():
+    msg = MockMessageStamped()
+    values = {'header': 'auto'}
+    assert msg.header.stamp.sec == 0 and msg.header.stamp.nanosec == 0
+    assert msg.header.frame_id == ''
+    with pytest.raises(
+            TypeError, match=r"^Value 'auto' is expected to be a dictionary but is a str$"):
+        set_message_fields(msg, values)
+
+
 def test_set_message_fields_stamp_now():
     msg = MockMessageStamped()
     values = {'header': {'stamp': 'now'}}
@@ -246,6 +256,16 @@ def test_set_message_fields_stamp_now():
         field_setter(stamp)
     assert msg.header.stamp.sec == 1 and msg.header.stamp.nanosec == 2
     assert msg.header.frame_id == ''
+
+
+def test_set_message_fields_stamp_now_not_parsed():
+    msg = MockMessageStamped()
+    values = {'header': {'stamp': 'now'}}
+    assert msg.header.stamp.sec == 0 and msg.header.stamp.nanosec == 0
+    assert msg.header.frame_id == ''
+    with pytest.raises(
+            TypeError, match=r"^Value 'now' is expected to be a dictionary but is a str$"):
+        set_message_fields(msg, values)
 
 
 def test_set_message_fields_stamp_now_with_frame_id():
