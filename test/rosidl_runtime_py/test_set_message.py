@@ -15,9 +15,8 @@
 import builtins
 import copy
 
-import pytest
-
 from builtin_interfaces.msg import Time
+import pytest
 import rosidl_parser.definition
 from rosidl_runtime_py import set_message_fields
 from std_msgs.msg import Header
