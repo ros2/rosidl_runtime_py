@@ -2,6 +2,13 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Expand timestamps for std_msgs.msg.Header and builtin_interfaces.msg.Time if 'auto' and 'now' are passed as values (`#19 <https://github.com/ros2/rosidl_runtime_py/issues/19>`_)
+* Document a missing parameter in message_to_yaml. (`#18 <https://github.com/ros2/rosidl_runtime_py/issues/18>`_)
+* Mirror rolling to master
+* Contributors: Audrow Nash, Chris Lalancette, Esteve Fernandez
+
 0.10.0 (2022-05-04)
 -------------------
 
