@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.3 (2022-11-07)
+------------------
+* [humble] Backport. Expand timestamps for std_msgs.msg.Header and builtin_interfaces.msg.Time if 'auto' and 'now' are passed as values (`#20 <https://github.com/ros2/rosidl_runtime_py/issues/20>`_)
+* Contributors: Esteve Fernandez
+
 0.9.2 (2022-03-28)
 ------------------
 * add yaml dump flow style. (`#16 <https://github.com/ros2/rosidl_runtime_py/issues/16>`_)
