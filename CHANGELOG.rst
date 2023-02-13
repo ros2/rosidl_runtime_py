@@ -2,8 +2,8 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.11.1 (2023-02-13)
+-------------------
 * [rolling] Update maintainers - 2022-11-07 (`#21 <https://github.com/ros2/rosidl_runtime_py/issues/21>`_)
 * Contributors: Audrow Nash
 
