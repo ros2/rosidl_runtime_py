@@ -51,7 +51,7 @@ def get_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[str]]:
     dictionary.
 
     :param package_names: Interfaces are returned for these packages.
-      If no package names are provided, then this function returns interfaces for all packages.
+        If no package names are provided, then this function returns interfaces for all packages.
     :return: A dictionary where keys are package names and values are lists of interface names.
     :raises LookupError: If one or more packages can not be found.
     """
@@ -77,7 +77,7 @@ def get_message_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[
     dictionary.
 
     :param package_names: Message interfaces are returned for these packages.
-      If no package names are provided, then this function returns interfaces for all packages.
+        If no package names are provided, then this function returns interfaces for all packages.
     :return: A dictionary where keys are package names and values are lists of interface names.
     :raises LookupError: If one or more packages can not be found.
     """
@@ -105,7 +105,7 @@ def get_service_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[
     dictionary.
 
     :param package_names: Service interfaces are returned for these packages.
-      If no package names are provided, then this function returns interfaces for all packages.
+        If no package names are provided, then this function returns interfaces for all packages.
     :return: A dictionary where keys are package names and values are lists of interface names.
     :raises LookupError: If one or more packages can not be found.
     """
@@ -133,7 +133,7 @@ def get_action_interfaces(package_names: Iterable[str] = []) -> Dict[str, List[s
     dictionary.
 
     :param package_names: Action interfaces are returned for these packages.
-      If no package names are provided, then this function returns interfaces for all packages.
+        If no package names are provided, then this function returns interfaces for all packages.
     :return: A dictionary where keys are package names and values are lists of interface names.
     :raises LookupError: If one or more packages can not be found.
     """
@@ -158,7 +158,7 @@ def get_interface_path(interface_name: str) -> str:
     Get the path to an interface definition file.
 
     :param interface_name: The name of the interface (e.g. builtin_interfaces/msg/Time.msg)
-      If no dot-separated suffix is provided, then it is inferred from the namespace.
+        If no dot-separated suffix is provided, then it is inferred from the namespace.
     :return: The path to the interface definition file.
     :raises ValueError: If the interface name is malformed.
     :raises LookupError: If the package or interface cannot be found.
