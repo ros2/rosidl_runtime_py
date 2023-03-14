@@ -22,7 +22,7 @@ from ament_index_python import get_resources
 from ament_index_python import has_resource
 
 
-def get_interface_packages() -> List[str]:
+def get_interface_packages() -> Dict[str, str]:
     """Get all packages that generate interfaces."""
     return get_resources('rosidl_interfaces')
 
