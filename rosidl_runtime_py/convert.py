@@ -143,7 +143,7 @@ def message_to_csv(
         return r
     result = ''
 
-    # We rely on __slots__ retaining the order of the fields in the .msg file.
+    # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
     for field_name, field_type in msg.get_fields_and_field_types().items():
         value = getattr(msg, field_name)
 
@@ -176,7 +176,7 @@ def message_to_ordereddict(
     """
     d = OrderedDict()
 
-    # We rely on __slots__ retaining the order of the fields in the .msg file.
+    # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
     for field_name, field_type in msg.get_fields_and_field_types().items():
         value = getattr(msg, field_name, None)
 
