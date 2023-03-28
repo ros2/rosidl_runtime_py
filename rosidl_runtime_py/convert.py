@@ -144,7 +144,7 @@ def message_to_csv(
     result = ''
 
     # We rely on __slots__ retaining the order of the fields in the .msg file.
-    for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
+    for field_name, field_type in msg.get_fields_and_field_types().items():
         value = getattr(msg, field_name)
 
         if result:
@@ -177,7 +177,7 @@ def message_to_ordereddict(
     d = OrderedDict()
 
     # We rely on __slots__ retaining the order of the fields in the .msg file.
-    for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
+    for field_name, field_type in msg.get_fields_and_field_types().items():
         value = getattr(msg, field_name, None)
 
         value = _convert_value(
