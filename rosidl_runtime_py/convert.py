@@ -145,7 +145,7 @@ def message_to_csv(
 
     # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
     for field_name, field_type in msg.get_fields_and_field_types().items():
-        value = getattr(msg, '_'+field_name)
+        value = getattr(msg, '_' + field_name)
 
         if result:
             result += ','
