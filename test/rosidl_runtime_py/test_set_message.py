@@ -122,9 +122,8 @@ def test_set_message_fields_partial():
     values['int32_value'] = 24
     set_message_fields(modified_msg, values)
 
-    for _attr in original_msg.__slots__:
+    for attr in original_msg.get_fields_and_field_types().keys():
         # Remove underscore prefix
-        attr = _attr[1:]
         if attr in values:
             assert getattr(modified_msg, attr) == values[attr]
         else:
@@ -138,9 +137,8 @@ def test_set_message_fields_full():
 
     # Set msg0 values to the values of msg1
     values = {}
-    for _attr in msg1.__slots__:
+    for attr in msg1.get_fields_and_field_types().keys():
         # Remove underscore prefix
-        attr = _attr[1:]
         values[attr] = getattr(msg1, attr)
     set_message_fields(msg0, values)
 
