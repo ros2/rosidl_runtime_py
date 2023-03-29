@@ -145,7 +145,7 @@ def message_to_csv(
 
     # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
     for field_name, field_type in msg.get_fields_and_field_types().items():
-        value = getattr(msg, '_' + field_name)
+        value = getattr(msg, field_name)
 
         if result:
             result += ','
@@ -178,12 +178,10 @@ def message_to_ordereddict(
 
     # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
     for field_name, field_type in msg.get_fields_and_field_types().items():
-        value = getattr(msg, '_' + field_name, None)
-
+        value = getattr(msg, field_name, None)
         value = _convert_value(
             value, field_type=field_type,
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
-        # Remove leading underscore from field name
         d[field_name] = value
     return d
 
