@@ -177,7 +177,7 @@ def message_to_ordereddict(
     d = OrderedDict()
 
     # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
-    for field_name, field_type in msg.get_fields_and_field_types().items():
+    for field_name, field_type in zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES):
         value = getattr(msg, field_name, None)
         value = _convert_value(
             value, field_type=field_type,
