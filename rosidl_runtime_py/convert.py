@@ -143,8 +143,11 @@ def message_to_csv(
         return r
     result = ''
 
-    # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
-    for field_name, field_type in msg.get_fields_and_field_types().items():
+    # The get_fields_and_field_types() method returns a map of field_names to stringified versions
+    # of the field types. But here we want the "rosidl_parser.definition" types, so we zip the
+    # field names together with SLOT_TYPES. The length of these two is guaranteed to be the same
+    # length by the Python code generator.
+    for field_name, field_type in zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES):
         value = getattr(msg, field_name)
 
         if result:
@@ -176,7 +179,10 @@ def message_to_ordereddict(
     """
     d = OrderedDict()
 
-    # We rely on the get_fields_and_field_types() method to retrieve the fields in the .msg file.
+    # The get_fields_and_field_types() method returns a map of field_names to stringified versions
+    # of the field types. But here we want the "rosidl_parser.definition" types, so we zip the
+    # field names together with SLOT_TYPES. The length of these two is guaranteed to be the same
+    # length by the Python code generator.
     for field_name, field_type in zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES):
         value = getattr(msg, field_name, None)
         value = _convert_value(
