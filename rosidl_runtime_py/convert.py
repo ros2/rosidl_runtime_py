@@ -252,4 +252,4 @@ def get_message_slot_types(msg: Any) -> OrderedDict:
     :param msg: The ROS message to get members types from.
     :returns: An OrderedDict with message member names as keys and slot types as values.
     """
-    return OrderedDict(zip([s[1:] for s in msg.__slots__], msg.SLOT_TYPES))
+    return OrderedDict(zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES))

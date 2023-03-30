@@ -40,6 +40,11 @@ class MockMessageStamped:
     def __init__(self):
         self.header = Header()
 
+    @classmethod
+    def get_fields_and_field_types(cls):
+        from copy import copy
+        return copy(cls._fields_and_field_types)
+
     @builtins.property
     def header(self):
         return self._header
@@ -69,6 +74,11 @@ class MockMessageWithStampFields:
     def __init__(self):
         self.timestamp1 = Time()
         self.timestamp2 = Time()
+
+    @classmethod
+    def get_fields_and_field_types(cls):
+        from copy import copy
+        return copy(cls._fields_and_field_types)
 
     @builtins.property
     def timestamp1(self):
