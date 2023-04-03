@@ -143,8 +143,11 @@ def message_to_csv(
         return r
     result = ''
 
-    # We rely on __slots__ retaining the order of the fields in the .msg file.
-    for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
+    # The get_fields_and_field_types() method returns a map of field_names to stringified versions
+    # of the field types. But here we want the "rosidl_parser.definition" types, so we zip the
+    # field names together with SLOT_TYPES. The length of these two is guaranteed to be the same
+    # length by the Python code generator.
+    for field_name, field_type in zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES):
         value = getattr(msg, field_name)
 
         if result:
@@ -176,15 +179,16 @@ def message_to_ordereddict(
     """
     d = OrderedDict()
 
-    # We rely on __slots__ retaining the order of the fields in the .msg file.
-    for field_name, field_type in zip(msg.__slots__, msg.SLOT_TYPES):
+    # The get_fields_and_field_types() method returns a map of field_names to stringified versions
+    # of the field types. But here we want the "rosidl_parser.definition" types, so we zip the
+    # field names together with SLOT_TYPES. The length of these two is guaranteed to be the same
+    # length by the Python code generator.
+    for field_name, field_type in zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES):
         value = getattr(msg, field_name, None)
-
         value = _convert_value(
             value, field_type=field_type,
             truncate_length=truncate_length, no_arr=no_arr, no_str=no_str)
-        # Remove leading underscore from field name
-        d[field_name[1:]] = value
+        d[field_name] = value
     return d
 
 
@@ -248,4 +252,4 @@ def get_message_slot_types(msg: Any) -> OrderedDict:
     :param msg: The ROS message to get members types from.
     :returns: An OrderedDict with message member names as keys and slot types as values.
     """
-    return OrderedDict(zip([s[1:] for s in msg.__slots__], msg.SLOT_TYPES))
+    return OrderedDict(zip(msg.get_fields_and_field_types().keys(), msg.SLOT_TYPES))

@@ -40,6 +40,11 @@ class MockMessageStamped:
     def __init__(self):
         self.header = Header()
 
+    @classmethod
+    def get_fields_and_field_types(cls):
+        from copy import copy
+        return copy(cls._fields_and_field_types)
+
     @builtins.property
     def header(self):
         return self._header
@@ -69,6 +74,11 @@ class MockMessageWithStampFields:
     def __init__(self):
         self.timestamp1 = Time()
         self.timestamp2 = Time()
+
+    @classmethod
+    def get_fields_and_field_types(cls):
+        from copy import copy
+        return copy(cls._fields_and_field_types)
 
     @builtins.property
     def timestamp1(self):
@@ -122,9 +132,8 @@ def test_set_message_fields_partial():
     values['int32_value'] = 24
     set_message_fields(modified_msg, values)
 
-    for _attr in original_msg.__slots__:
+    for attr in original_msg.get_fields_and_field_types().keys():
         # Remove underscore prefix
-        attr = _attr[1:]
         if attr in values:
             assert getattr(modified_msg, attr) == values[attr]
         else:
@@ -138,9 +147,8 @@ def test_set_message_fields_full():
 
     # Set msg0 values to the values of msg1
     values = {}
-    for _attr in msg1.__slots__:
+    for attr in msg1.get_fields_and_field_types().keys():
         # Remove underscore prefix
-        attr = _attr[1:]
         values[attr] = getattr(msg1, attr)
     set_message_fields(msg0, values)
 
