@@ -2,6 +2,12 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace the use __slots_\_ for the appropiate API (`#23 <https://github.com/ros2/rosidl_runtime_py/issues/23>`_)
+* fix(typing): `get_interface_packages` returns a dict (`#22 <https://github.com/ros2/rosidl_runtime_py/issues/22>`_)
+* Contributors: Eloy Briceno, 兰陈昕
+
 0.11.1 (2023-02-13)
 -------------------
 * [rolling] Update maintainers - 2022-11-07 (`#21 <https://github.com/ros2/rosidl_runtime_py/issues/21>`_)
