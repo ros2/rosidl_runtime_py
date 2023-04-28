@@ -2,6 +2,9 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.13.0 (2023-04-28)
+-------------------
+
 0.12.0 (2023-04-11)
 -------------------
 * Replace the use __slots_\_ for the appropiate API (`#23 <https://github.com/ros2/rosidl_runtime_py/issues/23>`_)
