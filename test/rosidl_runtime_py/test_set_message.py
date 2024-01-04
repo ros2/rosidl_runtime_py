@@ -122,13 +122,13 @@ def test_set_message_fields_none():
 def test_set_message_fields_partial():
     original_msg = message_fixtures.get_msg_basic_types()[0]
     original_msg.bool_value = False
-    original_msg.char_value = 3
+    original_msg.char_value = chr(3)
     original_msg.int32_value = 42
 
     modified_msg = copy.copy(original_msg)
     values = {}
     values['bool_value'] = True
-    values['char_value'] = 1
+    values['char_value'] = chr(1)
     values['int32_value'] = 24
     set_message_fields(modified_msg, values)
 
@@ -213,7 +213,7 @@ def test_set_message_fields_nested_type():
     msg0 = message_fixtures.get_msg_nested()[0]
 
     msg0.basic_types_value.bool_value = False
-    msg0.basic_types_value.char_value = 3
+    msg0.basic_types_value.char_value = chr(3)
     msg0.basic_types_value.int32_value = 42
 
     assert msg0.basic_types_value != msg_basic_types
