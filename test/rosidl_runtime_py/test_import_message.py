@@ -27,7 +27,7 @@ from test_msgs.msg import Empty
 def test_import_namespaced_type():
     fixture_namespaced_type = NamespacedType(['test_msgs', 'msg'], 'Empty')
     imported_message = import_message_from_namespaced_type(fixture_namespaced_type)
-    assert type(imported_message) == type(Empty)
+    assert type(imported_message) is type(Empty)
 
     not_namespaced_type = UnboundedSequence(fixture_namespaced_type)
     assert not isinstance(not_namespaced_type, NamespacedType)
@@ -38,10 +38,10 @@ def test_import_namespaced_type():
         imported_message2 = import_message_from_namespaced_type(not_namespaced_type)
         assert len(w) == 1
         assert issubclass(w[0].category, DeprecationWarning)
-    assert type(imported_message2) == type(Empty)
+    assert type(imported_message2) is type(Empty)
 
 
 def test_import_namespaced_type_feedback_message():
     feedback_namespaced_type = NamespacedType(['test_msgs', 'action'], 'Fibonacci_FeedbackMessage')
     imported_message = import_message_from_namespaced_type(feedback_namespaced_type)
-    assert type(imported_message) == type(Fibonacci_FeedbackMessage)
+    assert type(imported_message) is type(Fibonacci_FeedbackMessage)
