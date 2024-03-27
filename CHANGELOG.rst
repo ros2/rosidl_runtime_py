@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Some fixes for modern flake8. (`#25 <https://github.com/ros2/rosidl_runtime_py/issues/25>`_)
+* Contributors: Chris Lalancette
+
 0.13.0 (2023-04-28)
 -------------------
 
