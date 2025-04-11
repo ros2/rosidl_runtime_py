@@ -208,6 +208,31 @@ def test_set_nested_namespaced_fields():
     assert arrays_msg.basic_types_values[2].uint8_value == 0
 
 
+def test_set_nested_namespaced_fields_with_same_values():
+    unbounded_sequence_msg = message_fixtures.get_msg_unbounded_sequences()[1]
+    test_values = {
+        'basic_types_values': [
+            {'float64_value': 42.42, 'int8_value': 42},
+            {'float64_value': 11.11, 'int8_value': 11}
+        ]
+    }
+    set_message_fields(unbounded_sequence_msg, test_values)
+    assert unbounded_sequence_msg.basic_types_values[0].float64_value == 42.42
+    assert unbounded_sequence_msg.basic_types_values[0].int8_value == 42
+    assert unbounded_sequence_msg.basic_types_values[0].uint8_value == 0
+    assert unbounded_sequence_msg.basic_types_values[1].float64_value == 11.11
+    assert unbounded_sequence_msg.basic_types_values[1].int8_value == 11
+    assert unbounded_sequence_msg.basic_types_values[1].uint8_value == 0
+    # This should still succeed because test_values should not be modified
+    set_message_fields(unbounded_sequence_msg, test_values)
+    assert unbounded_sequence_msg.basic_types_values[0].float64_value == 42.42
+    assert unbounded_sequence_msg.basic_types_values[0].int8_value == 42
+    assert unbounded_sequence_msg.basic_types_values[0].uint8_value == 0
+    assert unbounded_sequence_msg.basic_types_values[1].float64_value == 11.11
+    assert unbounded_sequence_msg.basic_types_values[1].int8_value == 11
+    assert unbounded_sequence_msg.basic_types_values[1].uint8_value == 0
+
+
 def test_set_message_fields_nested_type():
     msg_basic_types = message_fixtures.get_msg_basic_types()[0]
     msg0 = message_fixtures.get_msg_nested()[0]

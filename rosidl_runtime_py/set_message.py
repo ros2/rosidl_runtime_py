@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import array
+import copy
 from functools import partial
 
 from typing import Any
@@ -54,6 +55,8 @@ def set_message_fields(
     def set_message_fields_internal(
             msg: Any, values: Dict[str, str],
             timestamp_fields: List[Any]) -> List[Any]:
+        # Create a deep copy of the input dictionary to avoid modifying it for safety
+        values = copy.deepcopy(values)
         try:
             items = values.items()
         except AttributeError:
