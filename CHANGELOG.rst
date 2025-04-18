@@ -2,6 +2,12 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.14.1 (2025-04-18)
+-------------------
+* Use deepcopy in set_message_fields for safety. (`#34 <https://github.com/ros2/rosidl_runtime_py/issues/34>`_)
+* Remove CODEOWNERS and mirror-rolling-to-master. (`#31 <https://github.com/ros2/rosidl_runtime_py/issues/31>`_)
+* Contributors: Chris Lalancette, Tomoya Fujita
+
 0.14.0 (2024-04-26)
 -------------------
 
