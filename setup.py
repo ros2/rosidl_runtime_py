@@ -23,7 +23,6 @@ setup(
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
     ],
     description='Runtime utilities for working with generated ROS interfaces in Python.',
@@ -31,5 +30,9 @@ setup(
         'This package provides functions for operations such as populating ROS messages '
         'and converting messages to different representations.'),
     license='Apache License, Version 2.0',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
 )
