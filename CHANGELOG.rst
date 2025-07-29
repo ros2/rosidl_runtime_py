@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecations (`#35 <https://github.com/ros2/rosidl_runtime_py/issues/35>`_)
+* Contributors: mosfet80
+
 0.15.0 (2025-04-25)
 -------------------
 
