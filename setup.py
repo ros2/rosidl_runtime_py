@@ -12,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
     ],
+    package_data={'': ['py.typed']},
     zip_safe=False,
     author='Dirk Thomas',
     author_email='dthomas@osrfoundation.org',
