@@ -22,6 +22,8 @@ from typing import List
 
 import numpy
 
+from rosidl_buffer import Buffer as _RosidlBuffer
+
 from rosidl_parser.definition import AbstractNestedType
 from rosidl_parser.definition import NamespacedType
 from rosidl_runtime_py.convert import get_message_slot_types
@@ -69,6 +71,8 @@ def set_message_fields(
             qualified_class_name = '{}.{}'.format(field_type.__module__, field_type.__name__)
             if field_type is array.array:
                 value = field_type(field.typecode, field_value)
+            elif field_type is _RosidlBuffer:
+                value = array.array('B', field_value)
             elif field_type is numpy.ndarray:
                 value = numpy.array(field_value, dtype=field.dtype)
             elif type(field_value) is field_type:

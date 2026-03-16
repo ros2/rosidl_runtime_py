@@ -21,6 +21,8 @@ import numpy
 import rosidl_parser.definition
 import yaml
 
+from rosidl_buffer import Buffer as _RosidlBuffer
+
 
 __yaml_representer_registered = False
 
@@ -116,7 +118,19 @@ def message_to_csv(
     def to_string(val, field_type=None):
         nonlocal truncate_length, no_arr, no_str
         r = ''
-        if any(isinstance(val, t) for t in [list, tuple, array.array, numpy.ndarray]):
+        if isinstance(val, _RosidlBuffer):
+            if no_arr is True and field_type is not None:
+                r = __abbreviate_array_info(val, field_type)
+            else:
+                val = list(val.to_bytes())
+                for i, v in enumerate(val):
+                    if r:
+                        r += ','
+                    if truncate_length is not None and i >= truncate_length:
+                        r += '...'
+                        break
+                    r += to_string(v)
+        elif any(isinstance(val, t) for t in [list, tuple, array.array, numpy.ndarray]):
             if no_arr is True and field_type is not None:
                 r = __abbreviate_array_info(val, field_type)
             else:
@@ -211,6 +225,13 @@ def _convert_value(
             value = '<string length: <{0}>>'.format(len(value))
         elif truncate_length is not None and len(value) > truncate_length:
             value = value[:truncate_length] + '...'
+    elif isinstance(value, _RosidlBuffer):
+        if no_arr is True and field_type is not None:
+            value = __abbreviate_array_info(value, field_type)
+        else:
+            value = list(value.to_bytes())
+            if truncate_length is not None and len(value) > truncate_length:
+                value = value[:truncate_length] + ['...']
     elif isinstance(value, (list, tuple, array.array, numpy.ndarray)):
         # Since arrays and ndarrays can't contain mixed types convert to list
         typename = tuple if isinstance(value, tuple) else list
