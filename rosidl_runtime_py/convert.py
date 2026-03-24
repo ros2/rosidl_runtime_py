@@ -114,7 +114,6 @@ def message_to_csv(
     :returns: A string of comma-separated values representing the input message.
     """
     def to_string(val, field_type=None):
-        nonlocal truncate_length, no_arr, no_str
         r = ''
         if any(isinstance(val, t) for t in [list, tuple, array.array, numpy.ndarray]):
             if no_arr is True and field_type is not None:
