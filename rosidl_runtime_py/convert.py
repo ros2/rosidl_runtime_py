@@ -14,7 +14,6 @@
 
 import array
 from collections import OrderedDict
-import itertools
 import sys
 from typing import Any
 
@@ -123,16 +122,8 @@ def message_to_csv(
                 r = __abbreviate_array_info(val, field_type)
             else:
                 values = val.to_bytes()
-                if truncate_length is not None:
-                    values = list(itertools.islice(values, truncate_length + 1))
-                    truncated = len(values) > truncate_length
-                    if truncated:
-                        values = values[:truncate_length]
-                else:
-                    values = list(values)
-                    truncated = False
-                r = ','.join(str(v) for v in values)
-                if truncated:
+                r = ','.join(str(v) for v in values[:truncate_length])
+                if truncate_length is not None and len(values) > truncate_length:
                     r += ',...'
         elif any(isinstance(val, t) for t in [list, tuple, array.array, numpy.ndarray]):
             if no_arr is True and field_type is not None:
@@ -233,15 +224,10 @@ def _convert_value(
         if no_arr and field_type is not None:
             value = __abbreviate_array_info(value, field_type)
         else:
-            values = value.to_bytes()
-            if truncate_length is not None:
-                values = list(itertools.islice(values, truncate_length + 1))
-                if len(values) > truncate_length:
-                    value = [int(v) for v in values[:truncate_length]] + ['...']
-                else:
-                    value = [int(v) for v in values]
-            else:
-                value = [int(v) for v in values]
+            bytestring = value.to_bytes()
+            value = [int(v) for v in bytestring[:truncate_length]]
+            if truncate_length is not None and len(bytestring) > truncate_length:
+                value += ['...']
     elif isinstance(value, (list, tuple, array.array, numpy.ndarray)):
         # Since arrays and ndarrays can't contain mixed types convert to list
         typename = tuple if isinstance(value, tuple) else list
