@@ -210,6 +210,12 @@ def _convert_value(
             value = '<string length: <{0}>>'.format(len(value))
         elif truncate_length is not None and len(value) > truncate_length:
             value = value[:truncate_length] + '...'
+    elif (
+        isinstance(value, (array.array, numpy.ndarray))
+        and not no_arr
+        and truncate_length is None
+    ):
+        value = value.tolist()
     elif isinstance(value, (list, tuple, array.array, numpy.ndarray)):
         # Since arrays and ndarrays can't contain mixed types convert to list
         typename = tuple if isinstance(value, tuple) else list
