@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.14.2 (2026-04-09)
+-------------------
+* Add py.typed to the package (`#37 <https://github.com/ros2/rosidl_runtime_py/issues/37>`_) (`#38 <https://github.com/ros2/rosidl_runtime_py/issues/38>`_)
+* Contributors: mergify[bot]
+
 0.14.1 (2025-04-18)
 -------------------
 * Use deepcopy in set_message_fields for safety. (`#34 <https://github.com/ros2/rosidl_runtime_py/issues/34>`_)
