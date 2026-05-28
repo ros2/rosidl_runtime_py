@@ -14,11 +14,12 @@
 
 import builtins
 import copy
+import yaml
 
 from builtin_interfaces.msg import Time
 import pytest
 import rosidl_parser.definition
-from rosidl_runtime_py import set_message_fields
+from rosidl_runtime_py import set_message_fields, message_to_yaml
 from std_msgs.msg import Header
 from test_msgs import message_fixtures
 
@@ -138,6 +139,18 @@ def test_set_message_fields_partial():
             assert getattr(modified_msg, attr) == values[attr]
         else:
             assert getattr(modified_msg, attr) == getattr(original_msg, attr)
+
+
+def test_set_message_fields_from_yaml():
+    original_msg = message_fixtures.get_msg_basic_types()[1]
+    original_yaml = message_to_yaml(original_msg)
+    values = yaml.safe_load(original_yaml)
+
+    modified_msg = copy.copy(message_fixtures.get_msg_basic_types()[0])
+    set_message_fields(modified_msg, values)
+
+    for attr in original_msg.get_fields_and_field_types().keys():
+        assert getattr(modified_msg, attr) == getattr(original_msg, attr)
 
 
 def test_set_message_fields_full():
