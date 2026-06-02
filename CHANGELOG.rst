@@ -2,8 +2,8 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.13.2 (2026-06-02)
+-------------------
 * Remove CODEOWNERS and mirror-rolling-to-master. (`#31 <https://github.com/ros2/rosidl_runtime_py/issues/31>`_) (`#32 <https://github.com/ros2/rosidl_runtime_py/issues/32>`_)
   They are both outdated and they both are not serving
   their intended purpose anymore.
