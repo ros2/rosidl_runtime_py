@@ -2,6 +2,15 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove CODEOWNERS and mirror-rolling-to-master. (`#31 <https://github.com/ros2/rosidl_runtime_py/issues/31>`_) (`#32 <https://github.com/ros2/rosidl_runtime_py/issues/32>`_)
+  They are both outdated and they both are not serving
+  their intended purpose anymore.
+  (cherry picked from commit e6c860fec22ffc44556d6d87f730e2d07a8cc62b)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mergify[bot]
+
 0.13.1 (2024-03-27)
 -------------------
 * Some fixes for modern flake8. (`#25 <https://github.com/ros2/rosidl_runtime_py/issues/25>`_)
