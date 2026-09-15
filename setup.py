@@ -30,7 +30,7 @@ setup(
     long_description=(
         'This package provides functions for operations such as populating ROS messages '
         'and converting messages to different representations.'),
-    license='Apache License, Version 2.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',
