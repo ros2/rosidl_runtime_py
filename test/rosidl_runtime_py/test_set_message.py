@@ -16,6 +16,7 @@ import builtins
 import copy
 
 from builtin_interfaces.msg import Time
+import numpy
 import pytest
 import rosidl_parser.definition
 from rosidl_runtime_py import set_message_fields
@@ -164,12 +165,118 @@ def test_set_message_fields_invalid():
 
     invalid_type = {}
     invalid_type['int32_value'] = 'this is not an integer'
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         set_message_fields(msg, invalid_type)
 
     msg = message_fixtures.get_msg_nested()[0]
     with pytest.raises(TypeError):
         set_message_fields(msg, 'not_a_dict')
+
+
+def test_set_message_fields_scalar_type_mismatch():
+    msg = message_fixtures.get_msg_basic_types()[0]
+    string_msg = message_fixtures.get_msg_strings()[0]
+
+    # String assigned to a bool field must not be truthy-coerced.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'bool_value': 'false'})
+
+    # Numeric values assigned to a bool field must not be truthy-coerced.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'bool_value': -1})
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'bool_value': 0.0})
+
+    # Float assigned to an integer field must not be silently truncated.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'int8_value': 1.5})
+
+    # String assigned to an integer field must not be parsed, even if numeric.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'int8_value': '42'})
+
+    # Bool assigned to an integer field must be rejected.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'int8_value': True})
+
+    # String assigned to a float field must not be parsed.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'float64_value': '1.5'})
+
+    # Bool assigned to a float field must be rejected.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'float64_value': True})
+
+    # Bool assigned to a string field must not be stringified.
+    with pytest.raises(TypeError):
+        set_message_fields(string_msg, {'string_value': True})
+
+    # NumPy scalars must not be cross-type coerced either.
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'bool_value': numpy.int64(1)})
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'int8_value': numpy.float64(2.0)})
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'int8_value': numpy.bool_(True)})
+    with pytest.raises(TypeError):
+        set_message_fields(msg, {'float64_value': numpy.bool_(True)})
+
+    # Exact-type assignments must continue to work.
+    set_message_fields(msg, {'bool_value': True, 'int8_value': 1, 'float64_value': 1.5})
+    assert msg.bool_value is True
+    assert msg.int8_value == 1
+    assert msg.float64_value == 1.5
+    set_message_fields(string_msg, {'string_value': 'hello'})
+    assert string_msg.string_value == 'hello'
+
+    # An int assigned to a float field is a deliberately supported widening
+    # (e.g. YAML/ros2 CLI commonly parse `5` as int even for a float field).
+    set_message_fields(msg, {'float64_value': 5})
+    assert msg.float64_value == 5.0
+    assert isinstance(msg.float64_value, float)
+
+
+class IntSubclass(int):
+    pass
+
+
+class FloatSubclass(float):
+    pass
+
+
+class StrSubclass(str):
+    pass
+
+
+def test_set_message_fields_compatible_scalar_types():
+    # Python subclasses and the matching NumPy scalars are compatible with a field
+    # and must be stored as the builtin field type.
+    for field_name, value, expected in (
+        ('bool_value', numpy.bool_(True), True),
+        ('int8_value', numpy.int64(5), 5),
+        ('int8_value', numpy.uint8(5), 5),
+        ('int8_value', IntSubclass(5), 5),
+        ('float64_value', numpy.float64(1.5), 1.5),
+        ('float64_value', numpy.float32(1.5), 1.5),
+        ('float64_value', FloatSubclass(1.5), 1.5),
+        ('float64_value', numpy.int64(5), 5.0),
+        ('float64_value', IntSubclass(5), 5.0),
+    ):
+        msg = message_fixtures.get_msg_basic_types()[0]
+        set_message_fields(msg, {field_name: value})
+        assert getattr(msg, field_name) == expected
+        assert type(getattr(msg, field_name)) is type(expected)
+
+    msg = message_fixtures.get_msg_basic_types()[0]
+    msg.bool_value = True
+    set_message_fields(msg, {'bool_value': numpy.bool_(False)})
+    assert msg.bool_value is False
+
+    for value in (StrSubclass('hello'), numpy.str_('hello')):
+        string_msg = message_fixtures.get_msg_strings()[0]
+        set_message_fields(string_msg, {'string_value': value})
+        assert string_msg.string_value == 'hello'
+        assert type(string_msg.string_value) is str
 
 
 def test_set_nested_namespaced_fields():
