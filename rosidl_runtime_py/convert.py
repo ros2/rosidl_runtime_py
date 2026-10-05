@@ -61,7 +61,9 @@ def __represent_ordereddict(dumper, data):
     items = []
     for k, v in data.items():
         items.append((dumper.represent_data(k), dumper.represent_data(v)))
-    return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', items)
+    return yaml.nodes.MappingNode(
+        u'tag:yaml.org,2002:map', items, flow_style=dumper.default_flow_style
+    )
 
 
 def message_to_yaml(
