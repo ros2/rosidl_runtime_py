@@ -2,6 +2,12 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.16.1 (2026-11-03)
+-------------------
+* Make custom YAML for ordereddict respect flow_style argument (`#45 <https://github.com/ros2/rosidl_runtime_py/issues/45>`_)
+* Use the SPDX identifier Apache-2.0 in license declarations (`#43 <https://github.com/ros2/rosidl_runtime_py/issues/43>`_)
+* Contributors: Jasper van Brakel, Michael Carroll
+
 0.16.0 (2026-05-05)
 -------------------
 
