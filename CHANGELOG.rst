@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.15.3 (2026-11-03)
+-------------------
+* Make custom YAML for ordereddict respect flow_style argument (`#45 <https://github.com/ros2/rosidl_runtime_py/issues/45>`_) (`#46 <https://github.com/ros2/rosidl_runtime_py/issues/46>`_)
+* Contributors: mergify[bot]
+
 0.15.2 (2026-04-09)
 -------------------
 * Add support for rosidl::Buffer in rosidl Python path for rclpy (`#39 <https://github.com/ros2/rosidl_runtime_py/issues/39>`_)
