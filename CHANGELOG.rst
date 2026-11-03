@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.13.3 (2026-11-03)
+-------------------
+* Make custom YAML for ordereddict respect flow_style argument (`#45 <https://github.com/ros2/rosidl_runtime_py/issues/45>`_) (`#48 <https://github.com/ros2/rosidl_runtime_py/issues/48>`_)
+* Contributors: mergify[bot]
+
 0.13.2 (2026-06-02)
 -------------------
 * Remove CODEOWNERS and mirror-rolling-to-master. (`#31 <https://github.com/ros2/rosidl_runtime_py/issues/31>`_) (`#32 <https://github.com/ros2/rosidl_runtime_py/issues/32>`_)
