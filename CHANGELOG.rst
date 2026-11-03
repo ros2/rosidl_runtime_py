@@ -2,6 +2,11 @@
 Changelog for package rosidl_runtime_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.4 (2026-11-03)
+------------------
+* Make custom YAML for ordereddict respect flow_style argument (`#45 <https://github.com/ros2/rosidl_runtime_py/issues/45>`_) (`#49 <https://github.com/ros2/rosidl_runtime_py/issues/49>`_)
+* Contributors: mergify[bot]
+
 0.9.3 (2022-11-07)
 ------------------
 * [humble] Backport. Expand timestamps for std_msgs.msg.Header and builtin_interfaces.msg.Time if 'auto' and 'now' are passed as values (`#20 <https://github.com/ros2/rosidl_runtime_py/issues/20>`_)
