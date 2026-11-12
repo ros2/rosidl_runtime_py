@@ -29,6 +29,16 @@ from rosidl_parser.definition import NamespacedType
 from rosidl_runtime_py.convert import get_message_slot_types
 from rosidl_runtime_py.import_message import import_message_from_namespaced_type
 
+# Input types that can be converted to each primitive field type without a cross-type
+# coercion: Python subclasses, the matching NumPy scalars and, for floats, integers
+# (YAML and the ros2 CLI parse a bare `5` as an int even if the field is a float).
+_COMPATIBLE_SCALAR_INPUTS = {
+    bool: (numpy.bool_,),
+    int: (int, numpy.integer),
+    float: (float, numpy.floating, int, numpy.integer),
+    str: (str,),
+}
+
 
 def set_message_fields(
         msg: Any, values: Dict[str, str], expand_header_auto: bool = False,
@@ -87,6 +97,17 @@ def set_message_fields(
                     field_value == 'now' and expand_time_now:
                 timestamp_fields.append(partial(setattr, msg, field_name))
                 continue
+            # The 'bool', 'int', 'float' and 'str' constructors accept almost any input
+            # without raising (e.g. bool('false') is True, int('42') is 42, str(True) is
+            # 'True'), so only compatible inputs are converted and the rest are rejected.
+            # A bool is an int in Python, but it must not be accepted as an int or float.
+            elif field_type in _COMPATIBLE_SCALAR_INPUTS:
+                if isinstance(field_value, bool) or \
+                        not isinstance(field_value, _COMPATIBLE_SCALAR_INPUTS[field_type]):
+                    raise TypeError(
+                        "Value '%s' for field '%s' is expected to be of type '%s' but is a '%s'" %
+                        (field_value, field_name, field_type.__name__, type(field_value).__name__))
+                value = field_type(field_value)
             else:
                 try:
                     value = field_type(field_value)
